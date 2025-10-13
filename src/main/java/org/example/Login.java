@@ -1,79 +1,112 @@
 package org.example;
 
 public class Login {
-    // The User details.
+    // Instance variables to store user data
     private String username;
     private String password;
+    private String cellphoneNumber;
     private String firstName;
     private String lastName;
-    private String cellphone;
+    private boolean isRegistered;
 
-    // This is the Constructor.
-    public Login(String username, String password, String firstName,
-                 String lastName, String cellphone) {
+    // Constructor
+    public Login() {
+        this.username = "";
+        this.password = "";
+        this.cellphoneNumber = "";
+        this.firstName = "";
+        this.lastName = "";
+        this.isRegistered = false;
+    }
+
+    // Method to check username format - PURE VALIDATION
+    public boolean checkUserName(String username) {
+        // Check if username contains underscore and is no more than 5 characters
+        return username.contains("_") && username.length() <= 5;
+    }
+
+    // Method to check password complexity - PURE VALIDATION
+    public boolean checkPasswordComplexity(String password) {
+        // Password must be at least 8 characters long
+        if (password.length() < 8) {
+            return false;
+        }
+
+        // Check for capital letter, number, and special character
+        boolean hasCapital = false;
+        boolean hasNumber = false;
+        boolean hasSpecial = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                hasCapital = true;
+            } else if (Character.isDigit(c)) {
+                hasNumber = true;
+            } else if (!Character.isLetterOrDigit(c)) {
+                hasSpecial = true;
+            }
+        }
+
+        return hasCapital && hasNumber && hasSpecial;
+    }
+
+    // Method to check cellphone number format using regex - FIXED VALIDATION
+    public boolean checkCellPhoneNumber(String cellphone) {
+        String regex ="^\\+27[0-9]{9}$";
+        return cellphone.matches(regex);
+    }
+
+    // Method to register user - DATA HANDLING ONLY
+    public String registerUser(String username, String password, String cellphoneNumber, String firstName, String lastName) {
         this.username = username;
         this.password = password;
+        this.cellphoneNumber = cellphoneNumber;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.cellphone = cellphone;
+        this.isRegistered = true;
+
+        return "User registered successfully!";
     }
 
-    // This is the Validation methods.Username must contain exactly 1 underscore and max 5 characters
-    public boolean checkUserName() {
-        return username != null && username.matches("^[^_]*_[^_]*$") && username.length() <= 5;
-    }
-
-    // Password must have at least 8 characters, 1 uppercase, 1 digit, 1 special character
-    public boolean checkPasswordComplexity() {
-        return password != null && password.matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{8,}$");
-    }
-
-    // Cellphone must start with +27 followed by 9 digits
-    public boolean checkCellPhoneNumber() {
-        return cellphone != null && cellphone.matches("^\\+27[0-9]{9}$");
-    }
-
-    //This is the registration right here.
-    public String registerUser() {
-        if (!checkUserName()) {
-            return "Username is not correctly formatted, please ensure that your username contains an underscore and is no more than five characters in length.";
+    // Method to verify login credentials - PURE VALIDATION
+    public boolean loginUser(String inputUsername, String inputPassword) {
+        if (!isRegistered) {
+            return false;
         }
-        if (!checkPasswordComplexity()) {
-            return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
-        }
-        if (!checkCellPhoneNumber()) {
-            return "Cell phone number incorrectly formatted or does not contain international code.";
-        }
-        return "User registered successfully.";
+        return inputUsername.equals(this.username) && inputPassword.equals(this.password);
     }
 
-    //  Login
-    public boolean loginUser(String enteredUsername, String enteredPassword) {
-        return this.username.equals(enteredUsername) &&
-                this.password.equals(enteredPassword);
-    }
-
-    public String returnLoginStatus(boolean success) {
-        if (success) {
-            return "Welcome " + firstName + " " + lastName + " it is great to see you again.";
+    // Method to return login status message - DATA HANDLING ONLY
+    public String returnLoginStatus(boolean loginSuccess) {
+        if (loginSuccess) {
+            return "Welcome " + this.firstName + ", " + this.lastName + " it is great to see you again.";
         } else {
             return "Username or password incorrect, please try again.";
         }
     }
 
-    // Getters and Setters (at the bottom)
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    // Getters for testing purposes
+    public String getUsername() {
+        return username;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public String getPassword() {
+        return password;
+    }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getCellphoneNumber() {
+        return cellphoneNumber;
+    }
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getFirstName() {
+        return firstName;
+    }
 
-    public String getCellphone() { return cellphone; }
-    public void setCellphone(String cellphone) { this.cellphone = cellphone; }
+    public String getLastName() {
+        return lastName;
+    }
+
+    public boolean isRegistered() {
+        return isRegistered;
+    }
 }
